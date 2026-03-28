@@ -15,7 +15,7 @@ function [model, FeatureTrain] = train_MFRQA_SVR(enhancedPaths, lowlightPaths, m
 %   'Gamma'     : RBF gamma (default: 0.5)
 %   'Epsilon'   : epsilon in epsilon-SVR (default: 0.1)
 %   'Verbose'   : true/false to print progress (default: true)
-%   'ModelPath' : output .mat file path (default: 'model.mat')
+%   'ModelPath' : output .mat file path (default: 'model_mfrqa_svr.mat')
 %
 %   Notes
 %   -----
@@ -28,7 +28,7 @@ parser.addParameter('C', 8, @(x) isnumeric(x) && isscalar(x) && x > 0);
 parser.addParameter('Gamma', 0.5, @(x) isnumeric(x) && isscalar(x) && x > 0);
 parser.addParameter('Epsilon', 0.1, @(x) isnumeric(x) && isscalar(x) && x >= 0);
 parser.addParameter('Verbose', true, @(x) islogical(x) || isnumeric(x));
-parser.addParameter('ModelPath', 'model.mat', @(x) ischar(x) || isstring(x));
+parser.addParameter('ModelPath', 'model_mfrqa_svr.mat', @(x) ischar(x) || isstring(x));
 parser.parse(varargin{:});
 opts = parser.Results;
 

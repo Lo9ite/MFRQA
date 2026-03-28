@@ -6,7 +6,7 @@
 % Example:
 %   data = readtable('train_pairs.csv');
 %   [model, feats] = train_MFRQA_SVR(data.enhanced_path, data.lowlight_path, ...
-%       data.score, 'C', 8, 'Gamma', 0.5, 'Epsilon', 0.1, 'ModelPath', 'model.mat');
+%       data.score, 'C', 8, 'Gamma', 0.5, 'Epsilon', 0.1, 'ModelPath', 'model_mfrqa_svr.mat');
 
 clear;
 clc;
@@ -36,6 +36,6 @@ end
                                         'C', 8, ...
                                         'Gamma', 0.5, ...
                                         'Epsilon', 0.1, ...
-                                        'ModelPath', 'model.mat');
+                                        'ModelPath', 'model_mfrqa_svr.mat');
 
 fprintf('Feature matrix size: %d x %d\n', size(FeatureTrain, 1), size(FeatureTrain, 2));
