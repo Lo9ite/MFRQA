@@ -42,7 +42,7 @@ if numel(enhancedPaths) ~= numSamples || numel(lowlightPaths) ~= numSamples
 end
 
 mosScores = double(mosScores(:));
-FeatureTrain = zeros(numSamples, 10);
+FeatureTrain = [];
 
 if opts.Verbose
     fprintf('Extracting features for %d samples...\n', numSamples);
@@ -53,7 +53,16 @@ for i = 1:numSamples
     imgLow = imread(lowlightPaths{i});
 
     feat = MFRQA_features(imgEnh, imgLow);
-    FeatureTrain(i, :) = feat(:)';
+    featRow = feat(:)';
+
+    if i == 1
+        FeatureTrain = zeros(numSamples, numel(featRow));
+    elseif numel(featRow) ~= size(FeatureTrain, 2)
+        error('Feature length mismatch at sample %d: expected %d, got %d.', ...
+              i, size(FeatureTrain, 2), numel(featRow));
+    end
+
+    FeatureTrain(i, :) = featRow;
 
     if opts.Verbose && (mod(i, 20) == 0 || i == numSamples)
         fprintf('  %d / %d\n', i, numSamples);
