@@ -67,11 +67,15 @@ end
 if ismember('mfrqa_pred_score', T.Properties.VariableNames)
     T.mfrqa_pred_score = pred;
 else
+    % Compatibility: avoid addvars for older MATLAB versions.
+    T.mfrqa_pred_score = pred;
+
     if ismember('score', T.Properties.VariableNames)
         scoreIdx = find(strcmp(T.Properties.VariableNames, 'score'), 1, 'first');
-        T = addvars(T, pred, 'After', scoreIdx, 'NewVariableNames', 'mfrqa_pred_score');
-    else
-        T = addvars(T, pred, 'NewVariableNames', 'mfrqa_pred_score');
+        names = T.Properties.VariableNames;
+        newIdx = find(strcmp(names, 'mfrqa_pred_score'), 1, 'first');
+        targetOrder = [1:scoreIdx, newIdx, scoreIdx+1:newIdx-1, newIdx+1:numel(names)];
+        T = T(:, targetOrder);
     end
 end
 
@@ -112,4 +116,3 @@ tf = (~isempty(regexp(p, '^[A-Za-z]:[\\/]', 'once')) || ...
       ~isempty(regexp(p, '^[\\/]{2}', 'once')) || ...
       startsWith(p, '/'));
 end
-
