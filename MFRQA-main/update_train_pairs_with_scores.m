@@ -6,7 +6,7 @@ function T = update_train_pairs_with_scores(csvPath, modelPath, baseDir)
 %
 % Inputs (optional):
 %   csvPath   - CSV file path (default: 'train_pairs.csv')
-%   modelPath - trained model path (default: 'model.mat')
+%   modelPath - trained model path (default: 'model_mfrqa_svr.mat')
 %   baseDir   - base directory to resolve relative image paths. If empty,
 %               first try the CSV folder, then current folder.
 %
@@ -16,15 +16,14 @@ function T = update_train_pairs_with_scores(csvPath, modelPath, baseDir)
 % Behavior:
 %   - Reads image pairs from CSV
 %   - Predicts each pair with MFRQA_SVR_with_model
-%   - Inserts/overwrites column 'MFRQA'
+%   - Inserts/overwrites column 'mfrqa_pred_score'
 %   - Writes updated table back to the same CSV file
 
 if nargin < 1 || isempty(csvPath)
     csvPath = 'train_pairs.csv';
 end
 if nargin < 2 || isempty(modelPath)
-    scriptDir = fileparts(mfilename('fullpath'));
-    modelPath = fullfile(scriptDir, 'model.mat');
+    modelPath = 'model_mfrqa_svr.mat';
 end
 if nargin < 3
     baseDir = '';
@@ -69,16 +68,16 @@ for i = 1:numRows
     end
 end
 
-if ismember('MFRQA', T.Properties.VariableNames)
-    T.MFRQA = pred;
+if ismember('mfrqa_pred_score', T.Properties.VariableNames)
+    T.mfrqa_pred_score = pred;
 else
     % Compatibility: avoid addvars for older MATLAB versions.
-    T.MFRQA = pred;
+    T.mfrqa_pred_score = pred;
 
     if ismember('score', T.Properties.VariableNames)
         scoreIdx = find(strcmp(T.Properties.VariableNames, 'score'), 1, 'first');
         names = T.Properties.VariableNames;
-        newIdx = find(strcmp(names, 'MFRQA'), 1, 'first');
+        newIdx = find(strcmp(names, 'mfrqa_pred_score'), 1, 'first');
         targetOrder = [1:scoreIdx, newIdx, scoreIdx+1:newIdx-1, newIdx+1:numel(names)];
         T = T(:, targetOrder);
     end
@@ -86,24 +85,6 @@ end
 
 writetable(T, csvPath);
 fprintf('Done. Updated CSV written to: %s\n', csvPath);
-end
-
-function modelPath = resolve_model_path(modelPath)
-if is_absolute_path(modelPath) && isfile(modelPath)
-    return;
-end
-
-scriptDir = fileparts(mfilename('fullpath'));
-p1 = fullfile(scriptDir, modelPath);
-if isfile(p1)
-    modelPath = p1;
-    return;
-end
-
-p2 = fullfile(pwd, modelPath);
-if isfile(p2)
-    modelPath = p2;
-end
 end
 
 function p = resolve_img_path(pathCell, baseDir, csvFolder)
