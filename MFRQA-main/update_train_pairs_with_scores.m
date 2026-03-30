@@ -32,6 +32,10 @@ end
 if ~isfile(csvPath)
     error('CSV file not found: %s', csvPath);
 end
+modelPath = resolve_model_path(modelPath);
+if ~isfile(modelPath)
+    error('Model file not found: %s', modelPath);
+end
 
 T = readtable(csvPath, 'TextType', 'string');
 requiredCols = {'enhanced_path', 'lowlight_path'};
